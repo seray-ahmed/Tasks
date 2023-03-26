@@ -38,8 +38,11 @@ namespace exercise1
             if (this.day > 0) this.day++;
             if (this.day > Month()) this.month++;
             if (temp != this.month) this.day = 1;
-            if (this.month > 12) this.year++;
-            if (this.month > 12) this.month = 1;
+            if (this.month > 12)
+            {
+                this.year++;
+                this.month = 1;
+            }
             
             Console.WriteLine("{0}.{1}.{2}", this.day, this.month, this.year);
             
