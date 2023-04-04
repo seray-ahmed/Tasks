@@ -40,6 +40,7 @@ namespace exercise4
             }
 
             PrintArray(matrix);
+            Console.WriteLine("Броят на празните полета е "+EmptyPlacesCount(matrix));
 
         }
         public static void PrintArray<T>(T[,] matrix)
@@ -54,6 +55,18 @@ namespace exercise4
                 }
                 Console.WriteLine();
             }
+        }
+        public static int EmptyPlacesCount(int[,] matrix)
+        {
+            int sum = 0;
+            foreach (int i in matrix)
+            {
+                if (i == 0)
+                {
+                    sum++;
+                }
+            }
+            return sum;
         }
     }
 

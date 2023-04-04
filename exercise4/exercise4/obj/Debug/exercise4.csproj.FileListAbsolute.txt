@@ -6,3 +6,11 @@ C:\Users\User\Desktop\Self Preparation\exercise4\exercise4\obj\Debug\exercise4.c
 C:\Users\User\Desktop\Self Preparation\exercise4\exercise4\obj\Debug\exercise4.csproj.CoreCompileInputs.cache
 C:\Users\User\Desktop\Self Preparation\exercise4\exercise4\obj\Debug\exercise4.exe
 C:\Users\User\Desktop\Self Preparation\exercise4\exercise4\obj\Debug\exercise4.pdb
+C:\Users\User\Desktop\Tasks\exercise4\exercise4\bin\Debug\exercise4.exe.config
+C:\Users\User\Desktop\Tasks\exercise4\exercise4\bin\Debug\exercise4.exe
+C:\Users\User\Desktop\Tasks\exercise4\exercise4\bin\Debug\exercise4.pdb
+C:\Users\User\Desktop\Tasks\exercise4\exercise4\obj\Debug\exercise4.csproj.AssemblyReference.cache
+C:\Users\User\Desktop\Tasks\exercise4\exercise4\obj\Debug\exercise4.csproj.SuggestedBindingRedirects.cache
+C:\Users\User\Desktop\Tasks\exercise4\exercise4\obj\Debug\exercise4.csproj.CoreCompileInputs.cache
+C:\Users\User\Desktop\Tasks\exercise4\exercise4\obj\Debug\exercise4.exe
+C:\Users\User\Desktop\Tasks\exercise4\exercise4\obj\Debug\exercise4.pdb
