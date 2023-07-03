@@ -1,4 +1,4 @@
-﻿using ConsoleApp1;
+﻿
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,8 +11,8 @@ namespace exercise6._2
     {
         static void Main(string[] args)
         {
-            MyBigInt numberOne = new MyBigInt("-1234");
-            MyBigInt numberTwo = new MyBigInt("1234");
+            MyBigInt numberOne = new MyBigInt("1234");
+            MyBigInt numberTwo = new MyBigInt("4578");
             MyBigInt numberThree = numberOne + numberTwo;
             Console.WriteLine(numberThree.MyNumber);
                     

@@ -1,65 +1,77 @@
 ﻿using System;
-using System.Text;
+using System.Linq;
 
-namespace ConsoleApp1
+namespace exercise6._2
 {
     public class MyBigInt
     {
-        private string myNumber;
+        private byte[] myNumber;
         public string MyNumber
         {
-            get => isNegative ? "-" + myNumber : myNumber;
-            set => myNumber = value;
+            get => (isNegative ? "-" : "") + string.Join("", myNumber);
+            set => myNumber = StringToByteArray(value);
         }
 
-        private readonly bool isNegative;
+        private bool isNegative;
 
         public MyBigInt(string myNumber)
         {
-            this.isNegative = false;
+            isNegative = false;
             if (myNumber.StartsWith("-"))
             {
-                this.isNegative = true;
+                isNegative = true;
                 myNumber = myNumber.Substring(1);
             }
-            this.myNumber = myNumber;
+            this.myNumber = StringToByteArray(myNumber);
+        }
+
+        private MyBigInt(byte[] myNumber)
+        {
+            this.myNumber = new byte[myNumber.Length];
+            Array.Copy(myNumber, this.myNumber, myNumber.Length);
         }
 
         public static MyBigInt operator +(MyBigInt a, MyBigInt b)
         {
             if (a.isNegative && b.isNegative)
             {
-                return new MyBigInt("-" + Addition(a.myNumber, b.myNumber));
+                MyBigInt myBigInt = new MyBigInt(Addition(a.myNumber, b.myNumber));
+                myBigInt.isNegative = true;
+                return myBigInt;
             }
             if (a.isNegative)
             {
-                if (a.isBigger(b.MyNumber))
-                {
-                    return new MyBigInt("-" + Subtraction(a.myNumber, b.myNumber));
-                }
-                return new MyBigInt(Subtraction(b.myNumber, a.myNumber));
+                return a.isBigger(StringToByteArray(b.MyNumber)) ? new MyBigInt(Subtraction(a.myNumber, b.myNumber)) { isNegative = true } :
+                    new MyBigInt(Subtraction(b.myNumber, a.myNumber));
             }
             if (b.isNegative)
             {
                 return new MyBigInt(Subtraction(a.myNumber, b.myNumber));
             }
             return new MyBigInt(Addition(a.myNumber, b.myNumber));
-
         }
 
         public static MyBigInt operator -(MyBigInt a, MyBigInt b)
         {
             if (a.isNegative && b.isNegative)
             {
-                return new MyBigInt("-" + Subtraction(a.myNumber, b.myNumber));
+                MyBigInt myBigInt = new MyBigInt(Subtraction(a.myNumber, b.myNumber));
+                myBigInt.isNegative = true;
+                return myBigInt;
             }
             if (a.isNegative)
             {
-                return new MyBigInt("-" + Addition(a.myNumber, b.myNumber));
+                return new MyBigInt(Addition(a.myNumber, b.myNumber)) { isNegative = true };
             }
             if (b.isNegative)
             {
                 return new MyBigInt(Addition(a.myNumber, b.myNumber));
+            }
+            if (b.isBigger(a.myNumber))
+            {
+                MyBigInt myBigInt = new MyBigInt(Subtraction(a.myNumber, b.myNumber));
+                myBigInt.isNegative = true;
+                return myBigInt;
             }
             return new MyBigInt(Subtraction(a.myNumber, b.myNumber));
         }
@@ -68,45 +80,42 @@ namespace ConsoleApp1
         {
             if (a.isNegative || b.isNegative)
             {
-                return new MyBigInt("-" + Multiply(a.myNumber, b.myNumber));
+                MyBigInt myBigInt = new MyBigInt(Multiply(a.myNumber, b.myNumber));
+                myBigInt.isNegative = true;
+                return myBigInt;
             }
-
             return new MyBigInt(Multiply(a.myNumber, b.myNumber));
         }
 
-        private static string Addition(string first, string second)
+        private static byte[] Addition(byte[] first, byte[] second)
         {
-            StringBuilder result = new StringBuilder();
-            int carry = 0;
-            int firstNumberLength = first.Length - 1;
-            int secondNumberLength = second.Length - 1;
+            int biggerNumberLength = Math.Max(first.Length, second.Length);
+            byte[] result = new byte[biggerNumberLength + 1];
+            byte carry = 0;
 
-            while (firstNumberLength >= 0 || secondNumberLength >= 0 || carry > 0)
+            for (int i = 0; i < biggerNumberLength || carry > 0; i++)
             {
-                int numberOne = firstNumberLength >= 0 ? int.Parse(first[firstNumberLength].ToString()) : 0;
-                int numberTwo = secondNumberLength >= 0 ? int.Parse(second[secondNumberLength].ToString()) : 0;
-                int sum = numberOne + numberTwo + carry;
-                carry = sum / 10;
-                int digit = sum % 10;
-                result.Insert(0, digit);
-                firstNumberLength--;
-                secondNumberLength--;
+                byte numberOne = (byte)(i < first.Length ? first[first.Length - i - 1] : 0);
+                byte numberTwo = (byte)(i < second.Length ? second[second.Length - i - 1] : 0);
+                byte sum = (byte)(numberOne + numberTwo + carry);
+                carry = (byte)(sum / 10);
+                byte digit = (byte)(sum % 10);
+                result[result.Length - i - 1] = digit;
             }
 
-            return result.ToString();
+            return TrimStart(result);
         }
 
-        private static string Subtraction(string first, string second)
+        private static byte[] Subtraction(byte[] first, byte[] second)
         {
-            StringBuilder result = new StringBuilder();
-            int borrow = 0;
-            int firstNumberLength = first.Length - 1;
-            int secondNumberLength = second.Length - 1;
+            int biggerNumberLength = Math.Max(first.Length, second.Length);
+            byte[] result = new byte[biggerNumberLength];
+            byte borrow = 0;
 
-            while (firstNumberLength >= 0 || secondNumberLength >= 0)
+            for (int i = 0; i < biggerNumberLength; i++)
             {
-                int numberOne = firstNumberLength >= 0 ? int.Parse(first[firstNumberLength].ToString()) : 0;
-                int numberTwo = secondNumberLength >= 0 ? int.Parse(second[secondNumberLength].ToString()) : 0;
+                byte numberOne = (byte)(i < first.Length ? first[first.Length - i - 1] : 0);
+                byte numberTwo = (byte)(i < second.Length ? second[second.Length - i - 1] : 0);
                 int diff = numberOne - borrow - numberTwo;
 
                 if (diff < 0)
@@ -119,65 +128,60 @@ namespace ConsoleApp1
                     borrow = 0;
                 }
 
-                result.Insert(0, diff);
-                firstNumberLength--;
-                secondNumberLength--;
+                result[result.Length - i - 1] = (byte)diff;
             }
 
-            // Remove leading zeros
-            while (result.Length > 1 && result[0] == '0')
-            {
-                result.Remove(0, 1);
-            }
-
-            return result.ToString();
+            return TrimStart(result);
         }
 
-        private static string Multiply(string first, string second)
+        private static byte[] Multiply(byte[] first, byte[] second)
         {
-            int firstNumberLength = first.Length;
-            int secondNumberLength = second.Length;
-            int[] result = new int[firstNumberLength + secondNumberLength];
+            byte[] result = new byte[first.Length + second.Length];
 
-            for (int i = 0; i < firstNumberLength; i++)
+            for (int i = 0; i < first.Length; i++)
             {
-                for (int j = 0; j < secondNumberLength; j++)
+                for (int j = 0; j < second.Length; j++)
                 {
-                    int numberOne = int.Parse(first[firstNumberLength - i - 1].ToString());
-                    int numberTwo = int.Parse(second[secondNumberLength - j - 1].ToString());
-                    int multiplyResult = numberOne * numberTwo;
-                    int sum = multiplyResult + result[(firstNumberLength - i - 1) + (secondNumberLength - j - 1) + 1];
-                    result[(firstNumberLength - i - 1) + (secondNumberLength - j - 1) + 1] = sum % 10;
-                    result[(firstNumberLength - i - 1) + (secondNumberLength - j - 1)] += sum / 10;
+                    byte numberOne = first[first.Length - i - 1];
+                    byte numberTwo = second[second.Length - j - 1];
+                    byte multiplyResult = (byte)(numberOne * numberTwo);
+                    byte sum = (byte)(multiplyResult + result[result.Length - i - j - 1]);
+                    result[result.Length - i - j - 1] = (byte)(sum % 10);
+                    result[result.Length - i - j - 2] += (byte)(sum / 10);
                 }
             }
 
-            StringBuilder sb = new StringBuilder();
-            foreach (int digit in result)
-            {
-                if (!(sb.Length == 0 && digit == 0))
-                {
-                    sb.Append(digit);
-                }
-            }
-
-            return sb.Length == 0 ? "0" : sb.ToString();
+            return TrimStart(result);
         }
 
-        private bool isBigger(string one)
+        private bool isBigger(byte[] one)
         {
             if (myNumber.Length > one.Length) return true;
-
             if (myNumber.Length < one.Length) return false;
 
             for (int i = 0; i < one.Length; i++)
             {
-                int currentNumberMyNumber = int.Parse(myNumber[i].ToString());
-                int currentNumberOne = int.Parse(one[i].ToString());
+                byte currentNumberMyNumber = myNumber[i];
+                byte currentNumberOne = one[i];
                 if (currentNumberMyNumber > currentNumberOne) return true;
                 if (currentNumberMyNumber < currentNumberOne) return false;
             }
+
             return false;
+        }
+
+        private static byte[] StringToByteArray(string number) =>
+            number.Select(x => byte.Parse(x.ToString())).ToArray();
+
+        private static byte[] TrimStart(byte[] num)
+        {
+            int startIndex = 0;
+            while (startIndex < num.Length - 1 && num[startIndex] == 0)
+                startIndex++;
+
+            byte[] result = new byte[num.Length - startIndex];
+            Array.Copy(num, startIndex, result, 0, result.Length);
+            return result;
         }
     }
 }
