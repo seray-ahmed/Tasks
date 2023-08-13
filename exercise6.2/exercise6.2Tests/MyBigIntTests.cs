@@ -110,6 +110,47 @@ namespace ConsoleApp1.Tests
 
             Assert.AreEqual("1", result.MyNumber);
         }
+        [TestMethod]
+        public void DivisionTest()
+        {
+            MyBigInt a = new MyBigInt("456");
+            MyBigInt b = new MyBigInt("12");
+
+            MyBigInt result = a / b;
+
+            Assert.AreEqual("38", result.MyNumber);
+        }
+
+        [TestMethod]
+        public void ModulusTest()
+        {
+            MyBigInt a = new MyBigInt("456");
+            MyBigInt b = new MyBigInt("12");
+
+            MyBigInt result = a % b;
+
+            Assert.AreEqual("0", result.MyNumber);
+        }
+        [TestMethod]
+        public void DivisionByNegativeNumberTest()
+        {
+            MyBigInt a = new MyBigInt("123");
+            MyBigInt b = new MyBigInt("-3");
+
+            MyBigInt result = a / b;
+
+            Assert.AreEqual("-41", result.MyNumber);
+        }
+
+        [TestMethod]
+        public void ModulusByNegativeNumberTest()
+        {
+            MyBigInt a = new MyBigInt("123");
+            MyBigInt b = new MyBigInt("-3");
+
+            MyBigInt result = a % b;
+
+            Assert.AreEqual("0", result.MyNumber);
+        }
     }
 }
-

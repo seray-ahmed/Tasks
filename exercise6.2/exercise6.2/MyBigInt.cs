@@ -86,6 +86,24 @@ namespace exercise6._2
             }
             return new MyBigInt(Multiply(a.myNumber, b.myNumber));
         }
+        public static MyBigInt operator /(MyBigInt a, MyBigInt b)
+        {
+            if (a.isNegative && b.isNegative)
+            {
+                return new MyBigInt(Divide(a.myNumber, b.myNumber));
+            }
+            if (a.isNegative || b.isNegative)
+            {
+                MyBigInt myBigInt = new MyBigInt(Divide(a.myNumber, b.myNumber));
+                myBigInt.isNegative = true;
+                return myBigInt;
+            }
+            return new MyBigInt(Divide(a.myNumber, b.myNumber));
+        }
+        public static MyBigInt operator %(MyBigInt a, MyBigInt b)
+        {
+            return new MyBigInt(Reminder(a.myNumber, b.myNumber));
+        }
 
         private static byte[] Addition(byte[] first, byte[] second)
         {
@@ -152,6 +170,36 @@ namespace exercise6._2
             }
 
             return TrimStart(result);
+        }
+
+        private static byte[] Divide(byte[] number, byte[] divisor)
+        {
+            MyBigInt times = new MyBigInt("0");
+            MyBigInt sum = new MyBigInt("0");
+            while (!sum.isBigger(number))
+            {
+                sum = new MyBigInt(Addition(sum.myNumber, divisor));
+                if (!sum.isBigger(number))
+                {
+                    times = new MyBigInt(Addition(times.myNumber, new byte[] { 1 }));
+                }
+            }
+            return times.myNumber;
+        }
+
+        private static byte[] Reminder(byte[] first, byte[] second)
+        {
+            MyBigInt sum = new MyBigInt("0");
+
+            while (!sum.isBigger(first))
+            {
+                MyBigInt currSum = new MyBigInt(Addition(StringToByteArray(sum.MyNumber), second));
+                sum = currSum;
+            }
+
+
+
+            return Subtraction(second, Subtraction(sum.myNumber, first));
         }
 
         private bool isBigger(byte[] one)
